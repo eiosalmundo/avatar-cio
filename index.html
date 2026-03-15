@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constructor de Avatar · EIOSALMUNDO CIO 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0eefe;color:#111;min-height:100vh}
+.app{max-width:700px;margin:0 auto;padding:1.5rem 1rem;background:#fff;min-height:100vh;box-shadow:0 0 30px rgba(83,74,183,0.08)}
+.step{display:none}.step.active{display:block}
+.prog{display:flex;gap:5px;align-items:center;margin-bottom:2rem;padding-top:0.5rem}
+.pd{width:9px;height:9px;border-radius:50%;background:#ddd;transition:all .3s;flex-shrink:0}
+.pd.done{background:#534AB7}.pd.cur{background:#7F77DD;width:13px;height:13px}
+.pl{font-size:12px;color:#666;margin-left:8px}
+.logo{text-align:center;padding:1.5rem 0 0.5rem;border-bottom:1px solid #eee;margin-bottom:1.5rem}
+.logo-title{font-size:13px;font-weight:700;color:#534AB7;letter-spacing:.1em;text-transform:uppercase}
+.logo-sub{font-size:11px;color:#999;margin-top:2px}
+.stag{font-size:11px;font-weight:700;color:#534AB7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.stitle{font-size:20px;font-weight:700;line-height:1.3;margin-bottom:8px;color:#111}
+.sdesc{font-size:14px;color:#555;line-height:1.6}
+.hint{background:#f0eefe;border-left:3px solid #7F77DD;padding:12px 16px;margin:1rem 0;font-size:13px;color:#444;line-height:1.6;border-radius:0 6px 6px 0}
+textarea{width:100%;padding:12px;font-size:14px;font-family:Arial,sans-serif;border:1px solid #ddd;border-radius:8px;background:#fff;color:#111;resize:vertical;line-height:1.6;min-height:90px;transition:border-color .2s}
+textarea:focus{outline:none;border-color:#7F77DD}
+.fl{font-size:13px;font-weight:600;margin-bottom:6px;display:block;color:#222}
+.fg{margin-bottom:1.25rem}
+.brow{display:flex;gap:10px;margin-top:1.5rem;justify-content:flex-end}
+.bbk{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 20px;font-size:14px;font-family:Arial,sans-serif;color:#666;cursor:pointer;transition:background .2s}
+.bbk:hover{background:#f5f5f5}
+.bnx{background:#534AB7;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-family:Arial,sans-serif;color:#fff;cursor:pointer;font-weight:700;transition:background .2s}
+.bnx:hover{background:#3C3489}.bnx:disabled{background:#ccc;cursor:not-allowed}
+.mopts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:1rem 0}
+.mopt{border:1px solid #ddd;border-radius:12px;padding:14px;cursor:pointer;background:#fff;transition:all .2s;text-align:center}
+.mopt:hover{border-color:#7F77DD;background:#f0eefe}
+.mopt.sel{border:2px solid #534AB7;background:#f0eefe}
+.mopt-icon{font-size:22px;margin-bottom:8px}
+.mopt-title{font-size:13px;font-weight:700;color:#111}
+.mopt.sel .mopt-title{color:#3C3489}
+.mopt-desc{font-size:11px;color:#777;margin-top:4px;line-height:1.4}
+.cc-wrap{display:grid;grid-template-columns:200px 1fr;gap:1.5rem;margin-top:1rem}
+.cc-canvas{display:flex;flex-direction:column;align-items:center;gap:0.75rem}
+.char-frame{width:200px;height:260px;border:1px solid #ddd;border-radius:12px;background:#f5f0fe;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cc-panels{display:flex;flex-direction:column;gap:0.75rem;overflow-y:auto;max-height:420px;padding-right:4px}
+.cc-section{background:#fafafa;border-radius:8px;padding:10px 12px;border:1px solid #eee}
+.cc-slabel{font-size:10px;font-weight:700;color:#534AB7;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.cc-opts{display:flex;flex-wrap:wrap;gap:5px}
+.cc-opt{border:1px solid #ddd;border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;background:#fff;color:#333;transition:all .15s}
+.cc-opt:hover{border-color:#7F77DD;background:#f0eefe;color:#3C3489}
+.cc-opt.sel{border:1.5px solid #534AB7;background:#f0eefe;color:#3C3489;font-weight:700}
+.cc-opt.color-opt{width:24px;height:24px;padding:0;border-radius:50%;border:2px solid transparent}
+.cc-opt.color-opt.sel{border:2.5px solid #534AB7;transform:scale(1.18)}
+.avatar-name-inp{width:100%;padding:8px 10px;font-size:13px;font-family:Arial,sans-serif;border:1px solid #ddd;border-radius:8px;background:#fff;color:#111;margin-top:2px}
+.avatar-name-inp:focus{outline:none;border-color:#7F77DD}
+.res-card{background:#fafafa;border-radius:12px;padding:1.25rem;border:1px solid #eee;margin-bottom:1rem}
+.res-sec{margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee}
+.res-sec:last-child{margin:0;padding:0;border:none}
+.res-lbl{font-size:10px;font-weight:700;color:#534AB7;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.res-txt{font-size:14px;color:#222;line-height:1.6}
+.pv-box{background:#f0eefe;border-radius:12px;padding:1.25rem;margin-bottom:1rem;border:1px solid #AFA9EC}
+.pv-lbl{font-size:10px;font-weight:700;color:#3C3489;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.pv-txt{font-size:15px;color:#26215C;line-height:1.6;font-weight:600}
+.steps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.step-card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:14px}
+.step-lbl{font-size:10px;font-weight:700;color:#534AB7;margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em}
+.step-txt{font-size:13px;color:#222;line-height:1.5}
+.cierre{background:#001A2F;border-radius:12px;padding:1.25rem;text-align:center;margin-bottom:1rem}
+.cierre-frase{font-size:15px;font-weight:600;line-height:1.5;color:#fff}
+.cierre-firma{font-size:11px;color:#7CC5E1;margin-top:8px}
+.copy-btn{background:#fff;border:1px solid #534AB7;border-radius:8px;padding:8px 16px;font-size:13px;color:#534AB7;cursor:pointer;font-family:Arial,sans-serif;transition:background .2s;display:block;margin:0 auto}
+.copy-btn:hover{background:#f0eefe}
+.char-result-row{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1rem}
+.char-mini-frame{width:110px;height:145px;border:1px solid #ddd;border-radius:10px;background:#f5f0fe;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.avatar-nombre-badge{display:inline-block;background:#534AB7;color:#fff;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;margin-top:6px}
+@media(max-width:520px){
+  .cc-wrap{grid-template-columns:1fr}
+  .mopts{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .char-result-row{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo">
+    <div class="logo-title">EIOSALMUNDO · Escuela de Líderes</div>
+    <div class="logo-sub">Liderazgo Emprendedor con IA · CIO 2026</div>
+  </div>
+
+  <div class="prog" id="prog"></div>
+
+  <!-- STEP 0 -->
+  <div class="step active" id="s0">
+    <div class="stag">Encuentro 2</div>
+    <div class="stitle">Hoy vas a darle forma a tu proyecto y a la persona para quien existe.</div>
+    <div class="sdesc" style="margin-top:10px">En los próximos minutos vas a crear tu avatar, definir tu cliente ideal, construir tu propuesta de valor y tener tus primeros pasos concretos.<br><br>No hay respuestas correctas. Hay respuestas honestas.</div>
+    <div class="hint">Esta experiencia tiene 5 pasos. Al final vas a tener todo armado para compartirlo con el grupo y usarlo en el juego de roles.</div>
+    <div class="brow"><button class="bnx" onclick="go(1)">Empezar</button></div>
+  </div>
+
+  <!-- STEP 1: MODELO -->
+  <div class="step" id="s1">
+    <div class="stag">Paso 1 de 5 · Tu modelo</div>
+    <div class="stitle">¿Qué tipo de proyecto estás construyendo?</div>
+    <div class="sdesc">Elegí el modelo que más se acerca a lo que querés crear.</div>
+    <div class="mopts">
+      <div class="mopt" onclick="selModel(this,'servicio profesional')">
+        <div class="mopt-icon">🎯</div>
+        <div class="mopt-title">Servicio profesional</div>
+        <div class="mopt-desc">Vendés tiempo y conocimiento uno a uno o en grupos pequeños</div>
+      </div>
+      <div class="mopt" onclick="selModel(this,'programa o experiencia grupal')">
+        <div class="mopt-icon">🌀</div>
+        <div class="mopt-title">Programa grupal</div>
+        <div class="mopt-desc">Una experiencia de transformación con inicio, proceso y cierre</div>
+      </div>
+      <div class="mopt" onclick="selModel(this,'producto o contenido')">
+        <div class="mopt-icon">📦</div>
+        <div class="mopt-title">Producto o contenido</div>
+        <div class="mopt-desc">Creás algo una vez que se consume muchas veces</div>
+      </div>
+    </div>
+    <div class="brow">
+      <button class="bbk" onclick="go(0)">Atrás</button>
+      <button class="bnx" id="b1" disabled onclick="go(2)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: AVATAR VISUAL -->
+  <div class="step" id="s2">
+    <div class="stag">Paso 2 de 5 · Tu cliente ideal</div>
+    <div class="stitle">Creá el personaje que representa a la persona para quien trabajás.</div>
+    <div class="sdesc">Dale nombre, rasgos y estilo. Este es el rostro de tu cliente ideal.</div>
+    <div class="cc-wrap">
+      <div class="cc-canvas">
+        <div class="char-frame"><canvas id="charCanvas" width="200" height="260"></canvas></div>
+        <input class="avatar-name-inp" id="avatarName" placeholder="Nombre del personaje..." oninput="drawChar(false)">
+      </div>
+      <div class="cc-panels">
+        <div class="cc-section">
+          <div class="cc-slabel">Tono de piel</div>
+          <div class="cc-opts" id="skin-opts">
+            <div class="cc-opt color-opt sel" style="background:#FFDBB4" onclick="selOpt(this,'skin','#FFDBB4')"></div>
+            <div class="cc-opt color-opt" style="background:#F5C5A3" onclick="selOpt(this,'skin','#F5C5A3')"></div>
+            <div class="cc-opt color-opt" style="background:#D4956A" onclick="selOpt(this,'skin','#D4956A')"></div>
+            <div class="cc-opt color-opt" style="background:#A0624A" onclick="selOpt(this,'skin','#A0624A')"></div>
+            <div class="cc-opt color-opt" style="background:#5C3317" onclick="selOpt(this,'skin','#5C3317')"></div>
+          </div>
+        </div>
+        <div class="cc-section">
+          <div class="cc-slabel">Género</div>
+          <div class="cc-opts" id="gender-opts">
+            <div class="cc-opt sel" onclick="selOpt(this,'gender','f')">Femenino</div>
+            <div class="cc-opt" onclick="selOpt(this,'gender','m')">Masculino</div>
+            <div class="cc-opt" onclick="selOpt(this,'gender','nb')">No binario</div>
+          </div>
+        </div>
+        <div class="cc-section">
+          <div class="cc-slabel">Cabello</div>
+          <div class="cc-opts" id="hair-opts">
+            <div class="cc-opt sel" onclick="selOpt(this,'hair','short')">Corto</div>
+            <div class="cc-opt" onclick="selOpt(this,'hair','long')">Largo</div>
+            <div class="cc-opt" onclick="selOpt(this,'hair','curly')">Rizado</div>
+            <div class="cc-opt" onclick="selOpt(this,'hair','bun')">Rodete</div>
+            <div class="cc-opt" onclick="selOpt(this,'hair','none')">Sin cabello</div>
+          </div>
+        </div>
+        <div class="cc-section">
+          <div class="cc-slabel">Color de cabello</div>
+          <div class="cc-opts" id="haircolor-opts">
+            <div class="cc-opt color-opt sel" style="background:#2C1810" onclick="selOpt(this,'haircolor','#2C1810')"></div>
+            <div class="cc-opt color-opt" style="background:#6B3A2A" onclick="selOpt(this,'haircolor','#6B3A2A')"></div>
+            <div class="cc-opt color-opt" style="background:#C8A96E" onclick="selOpt(this,'haircolor','#C8A96E')"></div>
+            <div class="cc-opt color-opt" style="background:#E8E8E8" onclick="selOpt(this,'haircolor','#E8E8E8')"></div>
+            <div class="cc-opt color-opt" style="background:#534AB7" onclick="selOpt(this,'haircolor','#534AB7')"></div>
+          </div>
+        </div>
+        <div class="cc-section">
+          <div class="cc-slabel">Ropa</div>
+          <div class="cc-opts" id="outfit-opts">
+            <div class="cc-opt sel" onclick="selOpt(this,'outfit','professional')">Profesional</div>
+            <div class="cc-opt" onclick="selOpt(this,'outfit','casual')">Casual</div>
+            <div class="cc-opt" onclick="selOpt(this,'outfit','sport')">Deportivo</div>
+            <div class="cc-opt" onclick="selOpt(this,'outfit','creative')">Creativo</div>
+          </div>
+        </div>
+        <div class="cc-section">
+          <div class="cc-slabel">Color de ropa</div>
+          <div class="cc-opts" id="outfitcolor-opts">
+            <div class="cc-opt color-opt sel" style="background:#2B3A8C" onclick="selOpt(this,'outfitcolor','#2B3A8C')"></div>
+            <div class="cc-opt color-opt" style="background:#8B1A1A" onclick="selOpt(this,'outfitcolor','#8B1A1A')"></div>
+            <div class="cc-opt color-opt" style="background:#1A6B3C" onclick="selOpt(this,'outfitcolor','#1A6B3C')"></div>
+            <div class="cc-opt color-opt" style="background:#4A4A4A" onclick="selOpt(this,'outfitcolor','#4A4A4A')"></div>
+            <div class="cc-opt color-opt" style="background:#7F77DD" onclick="selOpt(this,'outfitcolor','#7F77DD')"></div>
+            <div class="cc-opt color-opt" style="background:#D4953A" onclick="selOpt(this,'outfitcolor','#D4953A')"></div>
+          </div>
+        </div>
+        <div class="cc-section">
+          <div class="cc-slabel">Expresión</div>
+          <div class="cc-opts" id="expr-opts">
+            <div class="cc-opt sel" onclick="selOpt(this,'expr','happy')">Sonriente</div>
+            <div class="cc-opt" onclick="selOpt(this,'expr','neutral')">Serena</div>
+            <div class="cc-opt" onclick="selOpt(this,'expr','thoughtful')">Pensativa</div>
+            <div class="cc-opt" onclick="selOpt(this,'expr','worried')">Preocupada</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="brow">
+      <button class="bbk" onclick="go(1)">Atrás</button>
+      <button class="bnx" onclick="go(3)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: HISTORIA -->
+  <div class="step" id="s3">
+    <div class="stag">Paso 3 de 5 · La historia de tu avatar</div>
+    <div class="stitle">Ahora dale vida a ese personaje con su historia real.</div>
+    <div class="sdesc">Respondé las tres preguntas pensando en la persona que acabás de dibujar.</div>
+    <div class="hint">Si te bloqueas, preguntate: ¿hay alguien en mi entorno que ya tenga este problema? Describí a esa persona.</div>
+    <div class="fg">
+      <label class="fl">¿Qué está viviendo ahora mismo que lo hace necesitar lo que ofrecés?</label>
+      <textarea id="av1" placeholder="Ej: Es psicóloga de 40 años, trabaja en relación de dependencia y quiere atender pacientes de forma independiente pero no sabe cómo empezar..." oninput="chk3()"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">¿Qué problema específico tiene que vos podrías resolver?</label>
+      <textarea id="av2" placeholder="Ej: No sabe cómo comunicar su servicio, fijar precios ni conseguir sus primeros clientes particulares..." oninput="chk3()"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">¿Qué siente cuando ese problema sigue sin resolverse?</label>
+      <textarea id="av3" placeholder="Ej: Frustración, sensación de estancamiento, miedo a no poder dejar la relación de dependencia nunca..." oninput="chk3()"></textarea>
+    </div>
+    <div class="brow">
+      <button class="bbk" onclick="go(2)">Atrás</button>
+      <button class="bnx" id="b3" disabled onclick="go(4)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: PROPUESTA -->
+  <div class="step" id="s4">
+    <div class="stag">Paso 4 de 5 · Tu propuesta de valor</div>
+    <div class="stitle">¿Qué cambia en la vida de tu cliente gracias a lo que ofrecés?</div>
+    <div class="sdesc">Completá la frase. Versión 1.0: tiene que ser honesta, no perfecta.</div>
+    <div class="hint"><strong>Estructura:</strong> Ayudo a [quién] a lograr [qué resultado] a través de [cómo].</div>
+    <div class="fg">
+      <label class="fl">Ayudo a...</label>
+      <textarea id="pv1" placeholder="Ej: psicólogos y terapeutas que quieren construir su práctica independiente..." oninput="updPV()" style="min-height:70px"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">...a lograr...</label>
+      <textarea id="pv2" placeholder="Ej: conseguir sus primeros clientes con confianza y sin sentir que se están vendiendo..." oninput="updPV()" style="min-height:70px"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">...a través de...</label>
+      <textarea id="pv3" placeholder="Ej: un proceso de acompañamiento de 6 semanas que combina estrategia y trabajo interno..." oninput="updPV()" style="min-height:70px"></textarea>
+    </div>
+    <div class="pv-box" id="pvprev" style="display:none">
+      <div class="pv-lbl">Tu propuesta de valor</div>
+      <div class="pv-txt" id="pvtxt"></div>
+    </div>
+    <div class="fg">
+      <label class="fl">Primer paso concreto esta semana + fecha</label>
+      <textarea id="paso" placeholder="Ej: El martes voy a enviar un mensaje a tres colegas contándoles lo que estoy construyendo..." oninput="updPV()" style="min-height:70px"></textarea>
+    </div>
+    <div class="brow">
+      <button class="bbk" onclick="go(3)">Atrás</button>
+      <button class="bnx" id="b4" disabled onclick="buildRes()">Ver mi proyecto</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: RESULTADO -->
+  <div class="step" id="s5">
+    <div class="stag">Tu proyecto · versión 1.0</div>
+    <div class="stitle">Esto es lo que construiste hoy.</div>
+    <div class="sdesc">Leélo completo. ¿Resuena? Este es tu punto de partida real.</div>
+    <div class="char-result-row">
+      <div style="text-align:center">
+        <div class="char-mini-frame"><canvas id="charMini" width="110" height="145"></canvas></div>
+        <div><span class="avatar-nombre-badge" id="res-nombre-badge">Mi avatar</span></div>
+      </div>
+      <div style="flex:1">
+        <div class="res-card">
+          <div class="res-sec"><div class="res-lbl">Modelo de negocio</div><div class="res-txt" id="r-modelo"></div></div>
+          <div class="res-sec"><div class="res-lbl">Su situación</div><div class="res-txt" id="r-av1"></div></div>
+          <div class="res-sec"><div class="res-lbl">El problema que resuelvo</div><div class="res-txt" id="r-av2"></div></div>
+          <div class="res-sec"><div class="res-lbl">Lo que siente sin solución</div><div class="res-txt" id="r-av3"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pv-box">
+      <div class="pv-lbl">Tu propuesta de valor</div>
+      <div class="pv-txt" id="r-pv"></div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-lbl">Primer paso · esta semana</div>
+        <div class="step-txt" id="r-paso"></div>
+      </div>
+      <div class="step-card">
+        <div class="step-lbl">Para el juego de roles</div>
+        <div class="step-txt">Compartí este perfil con tu compañero. Ellos van a hacer de <strong id="r-nombre-roles">tu avatar</strong> mientras vos presentás tu proyecto.</div>
+      </div>
+    </div>
+    <div class="cierre">
+      <div class="cierre-frase" id="r-frase"></div>
+      <div class="cierre-firma">EIOSALMUNDO · Escuela de Líderes · CIO 2026</div>
+    </div>
+    <button class="copy-btn" onclick="copyRes()">Copiar mi proyecto para compartir</button>
+    <div class="brow" style="margin-top:1rem">
+      <button class="bbk" onclick="go(4)">Editar</button>
+      <button class="bnx" onclick="go(0)" style="background:#001A2F">Nuevo avatar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var cur=0,model='',charOpts={skin:'#FFDBB4',gender:'f',hair:'short',haircolor:'#2C1810',outfit:'professional',outfitcolor:'#2B3A8C',expr:'happy'};
+
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  updProg();
+  if(n===2)setTimeout(function(){drawChar(false);},50);
+  if(n===5){var nm=document.getElementById('avatarName').value||'Mi avatar';document.getElementById('r-nombre-roles').textContent=nm;}
+  window.scrollTo(0,0);
+}
+
+function updProg(){
+  var b=document.getElementById('prog');b.innerHTML='';
+  for(var i=0;i<=5;i++){var d=document.createElement('div');d.className='pd'+(i<cur?' done':'')+(i===cur?' cur':'');b.appendChild(d);}
+  var l=document.createElement('span');l.className='pl';
+  l.textContent=cur===0?'Bienvenida':cur===5?'Tu proyecto listo':'Paso '+cur+' de 5';
+  b.appendChild(l);
+}
+
+function selModel(el,val){
+  document.querySelectorAll('.mopt').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');model=val;
+  document.getElementById('b1').disabled=false;
+}
+
+function selOpt(el,key,val){
+  var par=el.closest('.cc-opts');
+  par.querySelectorAll('.cc-opt').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');charOpts[key]=val;drawChar(false);
+}
+
+function drawChar(mini){
+  var cid=mini?'charMini':'charCanvas';
+  var cv=document.getElementById(cid);if(!cv)return;
+  var ctx=cv.getContext('2d');
+  var W=cv.width,H=cv.height;
+  var sc=mini?0.55:1;
+  ctx.clearRect(0,0,W,H);
+  ctx.save();ctx.scale(sc,sc);
+  var fw=W/sc,fh=H/sc;
+  var skin=charOpts.skin,hair=charOpts.hair,hc=charOpts.haircolor;
+  var oc=charOpts.outfitcolor,expr=charOpts.expr,gen=charOpts.gender;
+  var outfit=charOpts.outfit;
+  var cx2=fw/2;
+
+  ctx.beginPath();ctx.arc(cx2,fh*0.38,fh*0.32,0,Math.PI*2);
+  ctx.fillStyle='#EDE8FB';ctx.fill();
+
+  var bodyY=fh*0.58;
+  if(outfit==='professional'){
+    ctx.beginPath();ctx.moveTo(cx2-45,fh);ctx.lineTo(cx2-45,bodyY);ctx.quadraticCurveTo(cx2-50,bodyY-10,cx2-30,bodyY-20);ctx.lineTo(cx2,bodyY-5);ctx.lineTo(cx2+30,bodyY-20);ctx.quadraticCurveTo(cx2+50,bodyY-10,cx2+45,bodyY);ctx.lineTo(cx2+45,fh);ctx.closePath();
+    ctx.fillStyle=oc;ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx2-20,bodyY-15);ctx.lineTo(cx2,bodyY+10);ctx.lineTo(cx2+20,bodyY-15);ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx2-12,bodyY-14);ctx.lineTo(cx2,bodyY+12);ctx.lineTo(cx2+12,bodyY-14);ctx.fillStyle='#fff';ctx.fill();
+  } else if(outfit==='casual'){
+    ctx.beginPath();ctx.moveTo(cx2-40,fh);ctx.lineTo(cx2-40,bodyY);ctx.quadraticCurveTo(cx2-50,bodyY-5,cx2-25,bodyY-18);ctx.lineTo(cx2+25,bodyY-18);ctx.quadraticCurveTo(cx2+50,bodyY-5,cx2+40,bodyY);ctx.lineTo(cx2+40,fh);ctx.closePath();
+    ctx.fillStyle=oc;ctx.fill();
+    ctx.beginPath();ctx.arc(cx2,bodyY-8,8,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.2)';ctx.fill();
+  } else if(outfit==='sport'){
+    ctx.beginPath();ctx.moveTo(cx2-38,fh);ctx.lineTo(cx2-38,bodyY);ctx.lineTo(cx2-28,bodyY-22);ctx.lineTo(cx2+28,bodyY-22);ctx.lineTo(cx2+38,bodyY);ctx.lineTo(cx2+38,fh);ctx.closePath();
+    ctx.fillStyle=oc;ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx2-38,bodyY+20);ctx.lineTo(cx2+38,bodyY+20);ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=3;ctx.stroke();
+  } else {
+    ctx.beginPath();ctx.moveTo(cx2-42,fh);ctx.lineTo(cx2-42,bodyY);ctx.quadraticCurveTo(cx2-30,bodyY-25,cx2,bodyY-10);ctx.quadraticCurveTo(cx2+30,bodyY-25,cx2+42,bodyY);ctx.lineTo(cx2+42,fh);ctx.closePath();
+    ctx.fillStyle=oc;ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx2-15,bodyY-18);ctx.lineTo(cx2-5,bodyY-5);ctx.moveTo(cx2+15,bodyY-18);ctx.lineTo(cx2+5,bodyY-5);ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=2;ctx.stroke();
+  }
+
+  ctx.beginPath();if(ctx.roundRect){ctx.roundRect(cx2-10,fh*0.46,20,fh*0.13,4);}else{ctx.rect(cx2-10,fh*0.46,20,fh*0.13);}
+  ctx.fillStyle=skin;ctx.fill();
+
+  var headY=fh*0.18,headR=fh*0.15;
+  ctx.beginPath();ctx.ellipse(cx2,headY+headR*0.8,headR*0.82,headR,0,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx2-headR*0.78,headY+headR*0.85,headR*0.12,headR*0.2,0,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx2+headR*0.78,headY+headR*0.85,headR*0.12,headR*0.2,0,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();
+
+  if(hair!=='none'){
+    ctx.fillStyle=hc;
+    if(hair==='short'){
+      ctx.beginPath();ctx.ellipse(cx2,headY,headR*0.88,headR*0.7,0,Math.PI,0);ctx.fill();
+      ctx.beginPath();ctx.ellipse(cx2-headR*0.7,headY+headR*0.5,headR*0.28,headR*0.4,0.3,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(cx2+headR*0.7,headY+headR*0.5,headR*0.28,headR*0.4,-0.3,0,Math.PI*2);ctx.fill();
+    } else if(hair==='long'){
+      ctx.beginPath();ctx.ellipse(cx2,headY,headR*0.88,headR*0.7,0,Math.PI,0);ctx.fill();
+      ctx.beginPath();ctx.ellipse(cx2-headR*0.82,headY+headR*1.2,headR*0.22,headR*0.9,0.15,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(cx2+headR*0.82,headY+headR*1.2,headR*0.22,headR*0.9,-0.15,0,Math.PI*2);ctx.fill();
+    } else if(hair==='curly'){
+      ctx.beginPath();ctx.arc(cx2,headY,headR*0.75,Math.PI*0.1,Math.PI*0.9,true);ctx.fill();
+      for(var i=0;i<6;i++){var a=Math.PI*0.1+i*Math.PI*0.13;var bx=cx2+Math.cos(a)*headR*0.72;var by=headY-Math.sin(a)*headR*0.72;ctx.beginPath();ctx.arc(bx,by-headR*0.18,headR*0.2,0,Math.PI*2);ctx.fill();}
+    } else if(hair==='bun'){
+      ctx.beginPath();ctx.ellipse(cx2,headY,headR*0.88,headR*0.7,0,Math.PI,0);ctx.fill();
+      ctx.beginPath();ctx.arc(cx2,headY-headR*0.55,headR*0.32,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  var eyeY=headY+headR*0.6,eyeSpread=headR*0.38;
+  ctx.beginPath();ctx.ellipse(cx2-eyeSpread,eyeY,headR*0.13,headR*0.1,0,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx2+eyeSpread,eyeY,headR*0.13,headR*0.1,0,0,Math.PI*2);ctx.fill();
+  var irisCol=gen==='m'?'#3D6B8C':gen==='nb'?'#6B3D8C':'#8C5B3D';
+  ctx.beginPath();ctx.arc(cx2-eyeSpread,eyeY,headR*0.08,0,Math.PI*2);ctx.fillStyle=irisCol;ctx.fill();
+  ctx.beginPath();ctx.arc(cx2+eyeSpread,eyeY,headR*0.08,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(cx2-eyeSpread,eyeY,headR*0.04,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();
+  ctx.beginPath();ctx.arc(cx2+eyeSpread,eyeY,headR*0.04,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx2-eyeSpread,eyeY,headR*0.15,headR*0.04,-0.1,Math.PI,0);ctx.strokeStyle='#333';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(cx2+eyeSpread,eyeY,headR*0.15,headR*0.04,0.1,Math.PI,0);ctx.stroke();
+
+  var mouthY=headY+headR*1.3;
+  if(expr==='happy'){ctx.beginPath();ctx.arc(cx2,mouthY-headR*0.08,headR*0.22,0.2,Math.PI-0.2);ctx.strokeStyle='#8B4513';ctx.lineWidth=2;ctx.stroke();}
+  else if(expr==='neutral'){ctx.beginPath();ctx.moveTo(cx2-headR*0.18,mouthY);ctx.lineTo(cx2+headR*0.18,mouthY);ctx.strokeStyle='#8B4513';ctx.lineWidth=2;ctx.stroke();}
+  else if(expr==='thoughtful'){ctx.beginPath();ctx.moveTo(cx2-headR*0.18,mouthY);ctx.quadraticCurveTo(cx2,mouthY+headR*0.08,cx2+headR*0.18,mouthY-headR*0.06);ctx.strokeStyle='#8B4513';ctx.lineWidth=2;ctx.stroke();}
+  else{ctx.beginPath();ctx.arc(cx2,mouthY+headR*0.12,headR*0.22,Math.PI+0.2,-0.2);ctx.strokeStyle='#8B4513';ctx.lineWidth=2;ctx.stroke();}
+
+  ctx.beginPath();ctx.moveTo(cx2,headY+headR*0.65);ctx.quadraticCurveTo(cx2+headR*0.12,headY+headR*1.1,cx2,headY+headR*1.12);
+  ctx.strokeStyle=skin==='#FFDBB4'?'#D4906A':'#8B5A3A';ctx.lineWidth=1.5;ctx.stroke();
+
+  if(!mini){
+    var nm=document.getElementById('avatarName').value;
+    if(nm){
+      ctx.fillStyle='#534AB7';
+      if(ctx.roundRect){ctx.beginPath();ctx.roundRect(cx2-60,fh-32,120,24,12);ctx.fill();}
+      else{ctx.fillRect(cx2-60,fh-32,120,24);}
+      ctx.fillStyle='#fff';ctx.font='bold 13px Arial';ctx.textAlign='center';ctx.fillText(nm,cx2,fh-15);
+    }
+  }
+  ctx.restore();
+}
+
+function chk3(){
+  var a=document.getElementById('av1').value.trim();
+  var b=document.getElementById('av2').value.trim();
+  var c=document.getElementById('av3').value.trim();
+  document.getElementById('b3').disabled=!(a.length>15&&b.length>10&&c.length>10);
+}
+
+function updPV(){
+  var q=document.getElementById('pv1').value.trim();
+  var qu=document.getElementById('pv2').value.trim();
+  var c=document.getElementById('pv3').value.trim();
+  var p=document.getElementById('paso').value.trim();
+  var box=document.getElementById('pvprev');
+  if(q||qu||c){box.style.display='block';document.getElementById('pvtxt').textContent='Ayudo a '+(q||'...')+' a lograr '+(qu||'...')+' a través de '+(c||'...')+'.';}
+  else{box.style.display='none';}
+  document.getElementById('b4').disabled=!(q.length>5&&qu.length>5&&c.length>5&&p.length>10);
+}
+
+function buildRes(){
+  var nm=document.getElementById('avatarName').value||'Mi avatar';
+  var q=document.getElementById('pv1').value.trim();
+  var qu=document.getElementById('pv2').value.trim();
+  var c=document.getElementById('pv3').value.trim();
+  var pv='Ayudo a '+q+' a lograr '+qu+' a través de '+c+'.';
+  document.getElementById('r-modelo').textContent=model.charAt(0).toUpperCase()+model.slice(1);
+  document.getElementById('r-av1').textContent=document.getElementById('av1').value.trim();
+  document.getElementById('r-av2').textContent=document.getElementById('av2').value.trim();
+  document.getElementById('r-av3').textContent=document.getElementById('av3').value.trim();
+  document.getElementById('r-pv').textContent=pv;
+  document.getElementById('r-paso').textContent=document.getElementById('paso').value.trim();
+  document.getElementById('r-nombre-roles').textContent=nm;
+  document.getElementById('res-nombre-badge').textContent=nm;
+  var frases=['Lo que armaste hoy no es un ejercicio. Es el primer borrador real de tu proyecto.','Definir para quién es tu proyecto es el acto de liderazgo más concreto que podés hacer.','El mundo no necesita que sea perfecto. Necesita que exista.','Conocer a tu cliente ideal no es una técnica de marketing. Es un acto de respeto.'];
+  document.getElementById('r-frase').textContent=frases[Math.floor(Math.random()*frases.length)];
+  go(5);
+  setTimeout(function(){drawChar(true);},80);
+}
+
+function copyRes(){
+  var nm=document.getElementById('avatarName').value||'Mi avatar';
+  var txt='MI PROYECTO · EIOSALMUNDO CIO 2026\n\nAVATAR: '+nm+'\nMODELO: '+document.getElementById('r-modelo').textContent+'\n\nSITUACIÓN DE MI CLIENTE:\n'+document.getElementById('r-av1').textContent+'\n\nPROBLEMA QUE RESUELVO:\n'+document.getElementById('r-av2').textContent+'\n\nLO QUE SIENTE SIN SOLUCIÓN:\n'+document.getElementById('r-av3').textContent+'\n\nPROPUESTA DE VALOR:\n'+document.getElementById('r-pv').textContent+'\n\nPRIMER PASO ESTA SEMANA:\n'+document.getElementById('r-paso').textContent;
+  navigator.clipboard.writeText(txt).then(function(){
+    var b=document.querySelector('.copy-btn');b.textContent='¡Copiado!';
+    setTimeout(function(){b.textContent='Copiar mi proyecto para compartir';},2000);
+  });
+}
+
+updProg();
+setTimeout(function(){drawChar(false);},100);
+</script>
+</body>
+</html>
+HTMLEOF
+echo "OK - $(wc -c < /home/claude/index.html) bytes"
