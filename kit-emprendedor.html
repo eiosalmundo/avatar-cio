@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit del Emprendedor · EIOSALMUNDO CIO 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0eefe;color:#111;min-height:100vh}
+.app{max-width:720px;margin:0 auto;padding:1.5rem 1rem;background:#fff;min-height:100vh}
+.step{display:none}.step.active{display:block}
+.logo{text-align:center;padding:1.25rem 0 1rem;border-bottom:1px solid #eee;margin-bottom:1.5rem}
+.logo-title{font-size:12px;font-weight:700;color:#534AB7;letter-spacing:.1em;text-transform:uppercase}
+.logo-sub{font-size:11px;color:#999;margin-top:2px}
+.prog{display:flex;gap:4px;align-items:center;margin-bottom:1.75rem}
+.pd{width:8px;height:8px;border-radius:50%;background:#ddd;transition:all .3s;flex-shrink:0}
+.pd.done{background:#534AB7}.pd.cur{background:#7F77DD;width:12px;height:12px}
+.pl{font-size:11px;color:#888;margin-left:8px}
+.stag{font-size:10px;font-weight:700;color:#534AB7;letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px}
+.stitle{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:8px;color:#111}
+.sdesc{font-size:14px;color:#555;line-height:1.6;margin-bottom:1.25rem}
+.hint{background:#f5f2ff;border-left:3px solid #7F77DD;padding:11px 15px;margin-bottom:1.25rem;font-size:13px;color:#444;line-height:1.6;border-radius:0 6px 6px 0}
+textarea{width:100%;padding:12px;font-size:14px;font-family:Arial,sans-serif;border:1px solid #ddd;border-radius:8px;background:#fff;color:#111;resize:vertical;line-height:1.6;min-height:100px;transition:border-color .2s}
+textarea:focus{outline:none;border-color:#534AB7}
+.fl{font-size:13px;font-weight:700;margin-bottom:6px;display:block;color:#222}
+.fg{margin-bottom:1.25rem}
+.brow{display:flex;gap:10px;margin-top:1.75rem;justify-content:flex-end}
+.bbk{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 20px;font-size:14px;font-family:Arial,sans-serif;color:#777;cursor:pointer}
+.bbk:hover{background:#f9f9f9}
+.bnx{background:#534AB7;border:none;border-radius:8px;padding:10px 26px;font-size:14px;font-family:Arial,sans-serif;color:#fff;cursor:pointer;font-weight:700}
+.bnx:hover{background:#3C3489}.bnx:disabled{background:#bbb;cursor:not-allowed}
+
+/* TARJETAS */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.card{border:1px solid #e0e0e0;border-radius:12px;padding:14px 16px;cursor:pointer;background:#fff;transition:all .2s;position:relative}
+.card:hover{border-color:#7F77DD;background:#faf8ff}
+.card.sel{border:2px solid #534AB7;background:#f5f2ff}
+.card-label{font-size:11px;font-weight:700;color:#534AB7;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.card.sel .card-label{color:#3C3489}
+.card-title{font-size:14px;font-weight:700;color:#111;margin-bottom:3px}
+.card-desc{font-size:12px;color:#666;line-height:1.4}
+.card.sel .card-title{color:#26215C}
+.check{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:#534AB7;display:none;align-items:center;justify-content:center}
+.card.sel .check{display:flex}
+.check::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.section-label{font-size:11px;font-weight:700;color:#534AB7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;margin-top:1.25rem;display:block}
+
+/* RESULTADO IA */
+.ai-loading{text-align:center;padding:2.5rem 1rem}
+.ai-spinner{width:40px;height:40px;border:3px solid #eee;border-top:3px solid #534AB7;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-loading-text{font-size:14px;color:#666;font-style:italic}
+.result-wrap{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.result-block{border-radius:12px;padding:1.25rem;margin-bottom:1rem;border:1px solid #e8e8e8}
+.result-block.purple{background:#f5f2ff;border-color:#c9c3f0}
+.result-block.dark{background:#001A2F;border-color:#001A2F}
+.result-block.ice{background:#e8f7fb;border-color:#7CC5E1}
+.result-block.warning{background:#fff9ec;border-color:#f0c040}
+
+.rb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
+.purple .rb-label{color:#534AB7}
+.dark .rb-label{color:#7CC5E1}
+.ice .rb-label{color:#1A7A9A}
+.warning .rb-label{color:#9A7000}
+
+.rb-title{font-size:17px;font-weight:700;margin-bottom:8px}
+.purple .rb-title{color:#26215C}
+.dark .rb-title{color:#fff}
+.ice .rb-title{color:#0A4A5A}
+.warning .rb-title{color:#6A4A00}
+
+.rb-body{font-size:14px;line-height:1.7}
+.purple .rb-body{color:#3C3489}
+.dark .rb-body{color:#C8D8E8}
+.ice .rb-body{color:#0A4A5A}
+.warning .rb-body{color:#6A4A00}
+
+.rb-list{list-style:none;padding:0;margin-top:8px}
+.rb-list li{font-size:14px;line-height:1.6;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);display:flex;gap:8px}
+.rb-list li:last-child{border:none}
+.rb-list li::before{content:'→';font-weight:700;flex-shrink:0}
+.purple .rb-list li::before{color:#534AB7}
+.dark .rb-list li::before{color:#7CC5E1}
+.ice .rb-list li::before{color:#1A7A9A}
+
+.copy-btn{display:block;width:100%;background:#fff;border:1px solid #534AB7;border-radius:8px;padding:10px;font-size:13px;color:#534AB7;cursor:pointer;font-family:Arial,sans-serif;text-align:center;margin-top:1rem}
+.copy-btn:hover{background:#f5f2ff}
+.restart-btn{display:block;width:100%;background:#001A2F;border:none;border-radius:8px;padding:10px;font-size:13px;color:#7CC5E1;cursor:pointer;font-family:Arial,sans-serif;text-align:center;margin-top:8px}
+
+.error-box{background:#fff0f0;border:1px solid #f0c0c0;border-radius:8px;padding:1rem;font-size:13px;color:#900;line-height:1.6;margin-bottom:1rem}
+
+@media(max-width:520px){.cards-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo">
+    <div class="logo-title">EIOSALMUNDO · Escuela de Líderes</div>
+    <div class="logo-sub">Kit del Emprendedor · Encuentro 2 · CIO 2026</div>
+  </div>
+  <div class="prog" id="prog"></div>
+
+  <!-- STEP 0: BIENVENIDA -->
+  <div class="step active" id="s0">
+    <div class="stag">Encuentro 2 · CIO 2026</div>
+    <div class="stitle">Hoy no solo definís a tu cliente.<br>Descubrís quién tenés que ser para servirlo.</div>
+    <div class="sdesc">Este kit tiene tres momentos: tu proyecto, el perfil de tu cliente ideal y tu identidad como vendedor. Al final, la IA te devuelve un análisis real, no un espejo de lo que escribiste.</div>
+    <div class="hint">No hay respuestas perfectas. Hay respuestas honestas. Cuanto más específico seas, más poderoso va a ser lo que recibís al final.</div>
+    <div class="brow"><button class="bnx" onclick="go(1)">Empezar</button></div>
+  </div>
+
+  <!-- STEP 1: MI PROYECTO -->
+  <div class="step" id="s1">
+    <div class="stag">Paso 1 de 4 · Tu proyecto</div>
+    <div class="stitle">¿Qué estás construyendo y para quién?</div>
+    <div class="sdesc">Describí tu proyecto en tus propias palabras. No busques la frase perfecta: buscá la frase honesta.</div>
+
+    <div class="fg">
+      <label class="fl">Describí tu proyecto: qué ofrecés, a quién y qué cambia en esa persona gracias a lo que hacés.</label>
+      <textarea id="proyecto" placeholder="Ej: Quiero crear un programa para mujeres que dejaron un trabajo corporativo y quieren emprender pero no saben por dónde empezar. Las ayudo a pasar de la idea al primer cliente sin perder la seguridad económica..." oninput="chk1()"></textarea>
+    </div>
+
+    <div class="fg">
+      <label class="fl">¿Cuál de estos modelos representa mejor lo que querés construir?</label>
+      <div class="cards-grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="card" onclick="selCard(this,'modelo','Servicio profesional')">
+          <div class="check"></div>
+          <div class="card-title">Servicio profesional</div>
+          <div class="card-desc">Tiempo y conocimiento directo, uno a uno o grupos pequeños</div>
+        </div>
+        <div class="card" onclick="selCard(this,'modelo','Programa o experiencia grupal')">
+          <div class="check"></div>
+          <div class="card-title">Programa grupal</div>
+          <div class="card-desc">Experiencia de transformación con inicio, proceso y cierre</div>
+        </div>
+        <div class="card" onclick="selCard(this,'modelo','Producto o contenido')">
+          <div class="check"></div>
+          <div class="card-title">Producto o contenido</div>
+          <div class="card-desc">Algo que se crea una vez y se consume muchas veces</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brow">
+      <button class="bbk" onclick="go(0)">Atrás</button>
+      <button class="bnx" id="b1" disabled onclick="go(2)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: EL CLIENTE -->
+  <div class="step" id="s2">
+    <div class="stag">Paso 2 de 4 · Tu cliente ideal</div>
+    <div class="stitle">¿Quién es la persona exacta<br>para quien estás creando esto?</div>
+    <div class="sdesc">No demografía. Situación de vida, emociones, decisiones. Elegí la opción que más resuene en cada categoría.</div>
+
+    <span class="section-label">¿En qué momento de vida está tu cliente?</span>
+    <div class="cards-grid">
+      <div class="card" onclick="selCard(this,'momento','Está en transición: acaba de cambiar algo grande en su vida')">
+        <div class="check"></div>
+        <div class="card-label">Transición</div>
+        <div class="card-title">Cambiando algo grande</div>
+        <div class="card-desc">Renunció, se separó, se mudó, tuvo un hijo, cumplió 40</div>
+      </div>
+      <div class="card" onclick="selCard(this,'momento','Está estancado: sabe lo que quiere pero no puede avanzar')">
+        <div class="check"></div>
+        <div class="card-label">Estancamiento</div>
+        <div class="card-title">Sabe pero no avanza</div>
+        <div class="card-desc">Tiene claro el destino pero algo lo paraliza hace tiempo</div>
+      </div>
+      <div class="card" onclick="selCard(this,'momento','Está creciendo: ya arrancó pero necesita el siguiente nivel')">
+        <div class="check"></div>
+        <div class="card-label">Crecimiento</div>
+        <div class="card-title">Quiere el siguiente nivel</div>
+        <div class="card-desc">Ya tiene algo funcionando y quiere escalarlo o profundizarlo</div>
+      </div>
+      <div class="card" onclick="selCard(this,'momento','Está en crisis: algo no funciona y necesita solución urgente')">
+        <div class="check"></div>
+        <div class="card-label">Crisis</div>
+        <div class="card-title">Necesita solución urgente</div>
+        <div class="card-desc">Hay dolor concreto, pérdida o presión que no puede ignorar</div>
+      </div>
+    </div>
+
+    <span class="section-label">¿Cuál es su miedo más profundo respecto al problema que vos resolvés?</span>
+    <div class="cards-grid">
+      <div class="card" onclick="selCard(this,'miedo','Miedo al juicio: que otros lo vean fracasar o equivocarse')">
+        <div class="check"></div>
+        <div class="card-title">Miedo al juicio</div>
+        <div class="card-desc">Le preocupa lo que van a pensar si no le sale</div>
+      </div>
+      <div class="card" onclick="selCard(this,'miedo','Miedo al fracaso económico: perder estabilidad o seguridad')">
+        <div class="check"></div>
+        <div class="card-title">Miedo económico</div>
+        <div class="card-desc">Le da terror perder lo que tiene o no poder sostenerse</div>
+      </div>
+      <div class="card" onclick="selCard(this,'miedo','Miedo a no ser suficiente: no tener lo necesario para lograrlo')">
+        <div class="check"></div>
+        <div class="card-title">Miedo a no ser suficiente</div>
+        <div class="card-desc">Duda de sus propias capacidades o conocimientos</div>
+      </div>
+      <div class="card" onclick="selCard(this,'miedo','Miedo al cambio: lo conocido da seguridad aunque duela')">
+        <div class="check"></div>
+        <div class="card-title">Miedo al cambio</div>
+        <div class="card-desc">Prefiere el dolor conocido antes que la incertidumbre nueva</div>
+      </div>
+    </div>
+
+    <span class="section-label">¿Qué ya intentó para resolver su problema?</span>
+    <div class="cards-grid">
+      <div class="card" onclick="selCard(this,'intento','Buscó información: cursos, libros, videos, redes sociales')">
+        <div class="check"></div>
+        <div class="card-title">Buscó información</div>
+        <div class="card-desc">Consumió contenido pero no logró aplicarlo</div>
+      </div>
+      <div class="card" onclick="selCard(this,'intento','Lo intentó solo: arrancó algo pero no lo terminó o no funcionó')">
+        <div class="check"></div>
+        <div class="card-title">Lo intentó solo</div>
+        <div class="card-desc">Tiene intentos fallidos y eso le generó más dudas</div>
+      </div>
+      <div class="card" onclick="selCard(this,'intento','Buscó ayuda profesional pero no encontró lo que necesitaba')">
+        <div class="check"></div>
+        <div class="card-title">Buscó ayuda</div>
+        <div class="card-desc">Fue a alguien pero no era el acompañamiento que necesitaba</div>
+      </div>
+      <div class="card" onclick="selCard(this,'intento','Todavía no intentó nada: el problema es nuevo o recién lo reconoció')">
+        <div class="check"></div>
+        <div class="card-title">No intentó nada aún</div>
+        <div class="card-desc">Recién toma conciencia del problema o acaba de decidir actuar</div>
+      </div>
+    </div>
+
+    <div class="fg" style="margin-top:1.25rem">
+      <label class="fl">¿Qué necesitaría ver en vos para decidir contratarte o comprarte? Sé específico.</label>
+      <textarea id="confianza" placeholder="Ej: Necesita ver que yo pasé por lo mismo que ella. Que no le voy a vender una fórmula sino que voy a acompañarla desde la experiencia propia..." oninput="chk2()" style="min-height:80px"></textarea>
+    </div>
+
+    <div class="brow">
+      <button class="bbk" onclick="go(1)">Atrás</button>
+      <button class="bnx" id="b2" disabled onclick="go(3)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: YO COMO VENDEDOR -->
+  <div class="step" id="s3">
+    <div class="stag">Paso 3 de 4 · Tu identidad como vendedor</div>
+    <div class="stitle">¿Quién tenés que ser vos<br>para que tu cliente te elija?</div>
+    <div class="sdesc">El mejor vendedor para un proyecto no es el más técnico ni el más famoso. Es el que puede conectar auténticamente con la persona exacta que necesita lo que ofrece.</div>
+    <div class="hint">Esto no es lo que querés aparentar. Es lo que genuinamente ya tenés y todavía no sabés que es un activo.</div>
+
+    <div class="fg">
+      <label class="fl">¿Cuál es tu mayor fortaleza humana para este proyecto? Lo que hacés naturalmente bien cuando acompañás a alguien.</label>
+      <textarea id="fortaleza" placeholder="Ej: Soy muy buena para hacer sentir a la gente que puede. Cuando alguien está bloqueado por el miedo, sé cómo devolverle la confianza sin que sea un discurso motivacional vacío..." oninput="chk3()"></textarea>
+    </div>
+
+    <div class="fg">
+      <label class="fl">¿Qué tenés en común con tu cliente ideal? ¿Qué viviste vos que te permite entenderlo de verdad?</label>
+      <textarea id="comun" placeholder="Ej: Yo también fui empleada durante 15 años y el día que renuncié sentí exactamente lo que ellas sienten: la mezcla de libertad y terror. Eso me hace diferente a alguien que siempre fue independiente..." oninput="chk3()"></textarea>
+    </div>
+
+    <span class="section-label">¿Cómo describís tu estilo natural de vender o comunicar?</span>
+    <div class="cards-grid">
+      <div class="card" onclick="selCard(this,'estilo','Cercano y emocional: conecto desde la historia y la empatía')">
+        <div class="check"></div>
+        <div class="card-title">Cercano y emocional</div>
+        <div class="card-desc">Tu diferencial es la conexión humana y la empatía genuina</div>
+      </div>
+      <div class="card" onclick="selCard(this,'estilo','Experto y confiable: transmito credibilidad desde el conocimiento')">
+        <div class="check"></div>
+        <div class="card-title">Experto y confiable</div>
+        <div class="card-desc">Tu diferencial es la autoridad y el saber demostrado</div>
+      </div>
+      <div class="card" onclick="selCard(this,'estilo','Directo y provocador: digo lo que otros no se animan a decir')">
+        <div class="check"></div>
+        <div class="card-title">Directo y provocador</div>
+        <div class="card-desc">Tu diferencial es la honestidad que incomoda y transforma</div>
+      </div>
+      <div class="card" onclick="selCard(this,'estilo','Inspirador y visionario: muestro posibilidades que el otro no ve')">
+        <div class="check"></div>
+        <div class="card-title">Inspirador y visionario</div>
+        <div class="card-desc">Tu diferencial es abrir horizontes y encender el deseo de cambio</div>
+      </div>
+    </div>
+
+    <div class="brow">
+      <button class="bbk" onclick="go(2)">Atrás</button>
+      <button class="bnx" id="b3" disabled onclick="buildAndAnalyze()">Generar mi kit</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: RESULTADO IA -->
+  <div class="step" id="s4">
+    <div class="stag">Tu kit del emprendedor · versión 1.0</div>
+    <div class="stitle">Esto es lo que la IA construyó<br>con lo que vos trajiste.</div>
+    <div class="sdesc">No es un resumen de lo que escribiste. Es un análisis real de tu proyecto, tu cliente y tu identidad como vendedor.</div>
+
+    <div id="ai-loading" class="ai-loading">
+      <div class="ai-spinner"></div>
+      <div class="ai-loading-text" id="loading-text">Analizando tu proyecto...</div>
+    </div>
+
+    <div id="ai-result" style="display:none" class="result-wrap">
+      <div id="result-content"></div>
+      <button class="copy-btn" onclick="copyResult()">Copiar mi kit para compartir</button>
+      <button class="restart-btn" onclick="go(0)">Empezar de nuevo</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var cur=0;
+var data={modelo:'',momento:'',miedo:'',intento:'',estilo:''};
+var loadingMsgs=['Analizando tu proyecto...','Construyendo el perfil de tu cliente...','Identificando tu kit de vendedor estrella...','Preparando tu entregable...'];
+var loadingIdx=0, loadingTimer=null;
+
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  updProg();
+  window.scrollTo(0,0);
+}
+
+function updProg(){
+  var b=document.getElementById('prog');b.innerHTML='';
+  for(var i=0;i<=4;i++){
+    var d=document.createElement('div');
+    d.className='pd'+(i<cur?' done':'')+(i===cur?' cur':'');
+    b.appendChild(d);
+  }
+  var l=document.createElement('span');l.className='pl';
+  var labels=['Bienvenida','Tu proyecto','Tu cliente','Tu identidad','Tu kit'];
+  l.textContent=labels[cur]||(cur+'/4');
+  b.appendChild(l);
+}
+
+function selCard(el,key,val){
+  var par=el.closest('.cards-grid');
+  par.querySelectorAll('.card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  data[key]=val;
+  if(key==='modelo')chk1();
+  if(key==='momento'||key==='miedo'||key==='intento')chk2();
+  if(key==='estilo')chk3();
+}
+
+function chk1(){
+  var p=document.getElementById('proyecto').value.trim();
+  document.getElementById('b1').disabled=!(p.length>20&&data.modelo);
+}
+
+function chk2(){
+  var c=document.getElementById('confianza').value.trim();
+  document.getElementById('b2').disabled=!(data.momento&&data.miedo&&data.intento&&c.length>15);
+}
+
+function chk3(){
+  var f=document.getElementById('fortaleza').value.trim();
+  var c=document.getElementById('comun').value.trim();
+  document.getElementById('b3').disabled=!(f.length>20&&c.length>20&&data.estilo);
+}
+
+function startLoadingAnim(){
+  loadingIdx=0;
+  var el=document.getElementById('loading-text');
+  el.textContent=loadingMsgs[0];
+  loadingTimer=setInterval(function(){
+    loadingIdx=(loadingIdx+1)%loadingMsgs.length;
+    el.textContent=loadingMsgs[loadingIdx];
+  },2200);
+}
+
+function stopLoadingAnim(){
+  if(loadingTimer){clearInterval(loadingTimer);loadingTimer=null;}
+}
+
+function buildAndAnalyze(){
+  go(4);
+  document.getElementById('ai-loading').style.display='block';
+  document.getElementById('ai-result').style.display='none';
+  startLoadingAnim();
+
+  var proyecto=document.getElementById('proyecto').value.trim();
+  var confianza=document.getElementById('confianza').value.trim();
+  var fortaleza=document.getElementById('fortaleza').value.trim();
+  var comun=document.getElementById('comun').value.trim();
+
+  var prompt=`Sos un consultor experto en desarrollo de negocios, marketing y psicología del comprador. Un emprendedor en formación te comparte el perfil de su proyecto y su cliente ideal. Tu trabajo es hacer un análisis profundo y devolver un entregable profesional en cuatro secciones exactas.
+
+DATOS DEL EMPRENDEDOR:
+- Proyecto: ${proyecto}
+- Modelo de negocio: ${data.modelo}
+- Momento de vida del cliente ideal: ${data.momento}
+- Miedo principal del cliente: ${data.miedo}
+- Qué ya intentó el cliente: ${data.intento}
+- Qué necesitaría ver en el vendedor para confiar: ${confianza}
+- Fortaleza humana del emprendedor: ${fortaleza}
+- Qué tiene en común con su cliente: ${comun}
+- Estilo natural de vender: ${data.estilo}
+
+Devolvé EXACTAMENTE este JSON (sin texto antes ni después, sin markdown, solo el JSON):
+{
+  "avatar": {
+    "titulo": "nombre evocador para este cliente ideal (no datos demográficos, una frase que lo capture como persona)",
+    "perfil": "descripción de 3 a 4 oraciones en lenguaje profesional y humano que capture quién es esta persona, qué está viviendo y por qué necesita exactamente este proyecto. Que sea específico, no genérico.",
+    "dolor_real": "el dolor más profundo detrás de lo que describió el emprendedor, lo que esta persona no dice en voz alta pero siente",
+    "frase_interna": "la frase que esta persona se dice a sí misma a las 2am cuando no puede dormir pensando en su problema"
+  },
+  "kit_vendedor": {
+    "identidad": "en 2 oraciones: cuál es la identidad auténtica que este emprendedor necesita encarnar para que su cliente lo elija por sobre cualquier otra opción",
+    "diferencial": "qué hace que ESTE emprendedor sea la persona correcta para ESTE cliente específico, basado en lo que compartió",
+    "tres_claves": ["primera clave concreta que este emprendedor necesita activar para conectar con su cliente", "segunda clave", "tercera clave"],
+    "primer_paso": "la acción más concreta y pequeña que puede hacer ESTA SEMANA para llegar a su primer cliente ideal real"
+  },
+  "pregunta_profunda": "la pregunta que este emprendedor todavía no se hizo pero que si la responde honestamente va a cambiar algo importante en cómo piensa su proyecto",
+  "alerta": "algo que está vago, contradictorio o que falta definir en lo que compartió, dicho con respeto pero con honestidad"
+}`;
+
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1000,
+      messages:[{role:"user",content:prompt}]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    stopLoadingAnim();
+    var text='';
+    if(d.content&&d.content.length>0){
+      d.content.forEach(function(b){if(b.type==='text')text+=b.text;});
+    }
+    var clean=text.replace(/```json|```/g,'').trim();
+    try{
+      var result=JSON.parse(clean);
+      renderResult(result);
+    }catch(e){
+      showError('Hubo un problema al procesar la respuesta. Intentá de nuevo.');
+    }
+  })
+  .catch(function(){
+    stopLoadingAnim();
+    showError('No se pudo conectar con la IA. Verificá tu conexión e intentá de nuevo.');
+  });
+}
+
+function renderResult(r){
+  document.getElementById('ai-loading').style.display='none';
+  var html='';
+
+  // AVATAR
+  html+='<div class="result-block purple">';
+  html+='<div class="rb-label">El perfil de tu cliente ideal</div>';
+  html+='<div class="rb-title">'+esc(r.avatar.titulo)+'</div>';
+  html+='<div class="rb-body">'+esc(r.avatar.perfil)+'</div>';
+  html+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(83,74,183,0.15)">';
+  html+='<div style="font-size:11px;font-weight:700;color:#534AB7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Lo que siente pero no dice</div>';
+  html+='<div style="font-size:13px;color:#3C3489">'+esc(r.avatar.dolor_real)+'</div>';
+  html+='</div>';
+  html+='<div style="margin-top:12px;background:#ede9fb;border-radius:8px;padding:10px 14px">';
+  html+='<div style="font-size:11px;font-weight:700;color:#534AB7;margin-bottom:4px">Lo que se dice a sí mismo/a a las 2am</div>';
+  html+='<div style="font-size:14px;color:#26215C;font-style:italic">"'+esc(r.avatar.frase_interna)+'"</div>';
+  html+='</div>';
+  html+='</div>';
+
+  // KIT VENDEDOR
+  html+='<div class="result-block dark">';
+  html+='<div class="rb-label">Tu kit de vendedor estrella</div>';
+  html+='<div class="rb-title">'+esc(r.kit_vendedor.identidad)+'</div>';
+  html+='<div class="rb-body" style="margin-top:8px">'+esc(r.kit_vendedor.diferencial)+'</div>';
+  html+='<div style="margin-top:14px">';
+  html+='<div style="font-size:11px;font-weight:700;color:#7CC5E1;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Las tres claves para conectar con tu cliente</div>';
+  html+='<ul class="rb-list">';
+  r.kit_vendedor.tres_claves.forEach(function(c){html+='<li style="color:#C8D8E8">'+esc(c)+'</li>';});
+  html+='</ul></div>';
+  html+='<div style="margin-top:14px;background:rgba(124,197,225,0.1);border-radius:8px;padding:10px 14px;border:1px solid rgba(124,197,225,0.2)">';
+  html+='<div style="font-size:11px;font-weight:700;color:#7CC5E1;margin-bottom:4px">Tu primer paso esta semana</div>';
+  html+='<div style="font-size:14px;color:#fff">'+esc(r.kit_vendedor.primer_paso)+'</div>';
+  html+='</div></div>';
+
+  // PREGUNTA PROFUNDA
+  html+='<div class="result-block ice">';
+  html+='<div class="rb-label">La pregunta que todavía no te hiciste</div>';
+  html+='<div class="rb-title" style="font-size:16px;font-style:italic">"'+esc(r.pregunta_profunda)+'"</div>';
+  html+='<div class="rb-body" style="margin-top:8px;font-size:13px">Llevala al juego de roles de hoy y a la conversación que vas a tener esta semana con tu cliente real.</div>';
+  html+='</div>';
+
+  // ALERTA
+  html+='<div class="result-block warning">';
+  html+='<div class="rb-label">Lo que todavía necesitás afinar</div>';
+  html+='<div class="rb-body">'+esc(r.alerta)+'</div>';
+  html+='</div>';
+
+  document.getElementById('result-content').innerHTML=html;
+  document.getElementById('ai-result').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function esc(str){
+  if(!str)return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showError(msg){
+  document.getElementById('ai-loading').style.display='none';
+  var html='<div class="error-box">'+msg+'</div>';
+  html+='<button class="copy-btn" onclick="buildAndAnalyze()">Reintentar</button>';
+  html+='<button class="restart-btn" onclick="go(0)">Empezar de nuevo</button>';
+  document.getElementById('result-content').innerHTML=html;
+  document.getElementById('ai-result').style.display='block';
+}
+
+function copyResult(){
+  var blocks=document.querySelectorAll('.result-block');
+  var text='KIT DEL EMPRENDEDOR · EIOSALMUNDO CIO 2026\n\n';
+  blocks.forEach(function(b){
+    var label=b.querySelector('.rb-label');
+    var title=b.querySelector('.rb-title');
+    var body=b.querySelector('.rb-body');
+    if(label)text+=label.textContent.toUpperCase()+'\n';
+    if(title)text+=title.textContent+'\n';
+    if(body)text+=body.textContent+'\n';
+    text+='\n';
+  });
+  navigator.clipboard.writeText(text).then(function(){
+    var btn=document.querySelector('.copy-btn');
+    btn.textContent='¡Copiado!';
+    setTimeout(function(){btn.textContent='Copiar mi kit para compartir';},2000);
+  });
+}
+
+updProg();
+</script>
+</body>
+</html>
